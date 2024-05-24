@@ -1,0 +1,79 @@
+#Лабораторная работа №6. 1 часть – написать программу в соответствии со своим вариантом задания.
+# Написать 2 варианта формирования (алгоритмический и с помощью функций Питона), сравнив по времени их выполнение.
+#2 часть – усложнить написанную программу, введя по своему усмотрению в условие минимум одно ограничение
+# на характеристики объектов (которое будет сокращать количество переборов)
+# и целевую функцию для нахождения оптимального  решения.
+#Вариант 1.Видео-хостинг подготовил к просмотру К фильмов.
+# По абонементу можно выбрать любую программу, состоящую из N фильмов.
+# Сформировать все возможные варианты программ.
+#k! / ((k - n)! * n!) = кол-во всевозможных вариантов
+import itertools
+from timeit import timeit
+from itertools import combinations
+from random import randint
+#1 ЧАСТЬ
+k = 0
+cnt = 0
+k_list = []
+rating_list = []
+n = 0
+n_list = []
+while (k < 1) or (k > 51):
+    k = int(input('Введите K > 0 и K < 51: '))
+for i in range(k):
+    k_list.append(str(i))
+while (n < 1) or (n > k):
+    n = int(input('Введите N > 0 и N < K: '))
+
+def abc(n):
+    lst = []
+    rates = []
+    names = ['CITIZEN KANE', 'VERTIGO', '2001: A SPACE ODYSSEY', 'TOKYO STORY', 'THE RULES OF THE GAME',
+'THE GODFATHER', '8½', 'SUNRISE', 'THE SEARCHERS', 'SEVEN SAMURAI', 'SINGIN\' IN THE RAIN',
+'JEANNE DIELMAN', '23 QUAI DU COMMERCE', '1080 BRUXELLES', 'APOCALYPSE NOW', 'TAXI DRIVER',
+'BICYCLE THIEVES', 'PERSONA', 'IN THE MOOD FOR LOVE', 'THE PASSION OF JOAN OF ARC', 'BREATHLESS',
+'L\'ATALANTE', 'BATTLESHIP POTEMKIN', 'THE MAN WITH A MOVIE CAMERA', 'MIRROR', 'RASHOMON',
+'CITY LIGHTS', 'THE 400 BLOWS', 'ANDREI RUBLEV', 'PSYCHO', 'AU HASARD BALTHAZAR', 'MULHOLLAND DR.',
+'THE GODFATHER PART II', 'SOME LIKE IT HOT', 'ORDET', 'LA DOLCE VITA', 'RAGING BULL',
+'THE NIGHT OF THE HUNTER', 'L\'AVVENTURA', 'CASABLANCA', 'REAR WINDOW', 'BLADE RUNNER', 'CONTEMPT',
+'BARRY LYNDON', 'PATHER PANCHALI', 'TOUCH OF EVIL', 'SUNSET BLVD.', 'STALKER',
+'CLOSE-UP', 'LAWRENCE OF ARABIA'
+]
+    for i in range(k):
+        lst.append(names[i])
+        rates.append(randint(1, 5))
+    return lst, rates
+
+k_list, rating_list = abc(n)
+
+def comb(res, lst, x):
+    if x == 0:
+        print(res)
+    else:
+        for i in range(len(lst)):
+            comb(res + lst[i] + ', ', lst[i+1:], x-1)
+
+def combinations(lst, x):
+    for i in itertools.combinations(lst, x):
+        print(i)
+
+comb_time = timeit(lambda: comb('', k_list, n), number=1)
+combinations_time = timeit(lambda: combinations(k_list, n), number=1)
+print(f"Время алгоритмического формирования: {'{:.10f}'.format(comb_time)} секунд")
+print(f"Время формирования через функции Python:  {'{:.10f}'.format(combinations_time)} секунд",'\n')
+
+#2 ЧАСТЬ Ограничение по рейтингу фильма (брать фильмы от рейтинга 4 и выше)
+def pop_list(lst, rates):
+    rates_1 = []
+    lst_1 = []
+    for i in range(len(rates)):
+        if rates[i] >= 4:
+            lst_1.append(lst[i])
+            rates_1.append(rates[i])
+    return lst_1, rates_1
+
+k_list, rating_list = pop_list(k_list, rating_list)
+print('Названия:', k_list)
+print('Рейтинги: ', rating_list)
+
+comb('', k_list, n)
